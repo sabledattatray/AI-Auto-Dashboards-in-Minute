@@ -1,0 +1,21 @@
+{
+  "name": "luminabi",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "test": "turbo test",
+    "db:push": "npm run db:push -w web",
+    "db:migrate": "npm run db:migrate -w web",
+    "db:seed": "npm run db:seed -w web"
+  },
+  "devDependencies": {
+    "turbo": "^2.9.8"
+  },
+  "packageManager": "npm@10.8.2"
+}

@@ -1,0 +1,369 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ─────────────────────────────────────────────
+// ORGANIZATION / WORKSPACE
+// ─────────────────────────────────────────────
+
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  plan        Plan     @default(FREE)
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members     WorkspaceMember[]
+  reports     Report[]
+  datasets    Dataset[]
+  themes      Theme[]
+  invitations Invitation[]
+  subscription Subscription?
+
+  @@map("workspaces")
+}
+
+model WorkspaceMember {
+  id          String    @id @default(cuid())
+  workspaceId String
+  userId      String    // Clerk user ID
+  role        MemberRole @default(VIEWER)
+  joinedAt    DateTime  @default(now())
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@map("workspace_members")
+}
+
+model Invitation {
+  id          String    @id @default(cuid())
+  workspaceId String
+  email       String
+  role        MemberRole @default(VIEWER)
+  token       String    @unique @default(cuid())
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+
+  @@map("invitations")
+}
+
+// ─────────────────────────────────────────────
+// REPORTS & PAGES
+// ─────────────────────────────────────────────
+
+model Report {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  description String?
+  slug        String
+  isPublic    Boolean  @default(false)
+  thumbnail   String?
+  themeId     String?
+  createdBy   String   // Clerk user ID
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  theme       Theme?    @relation(fields: [themeId], references: [id])
+  pages       ReportPage[]
+  shares      ReportShare[]
+
+  @@unique([workspaceId, slug])
+  @@map("reports")
+}
+
+model ReportPage {
+  id          String   @id @default(cuid())
+  reportId    String
+  name        String
+  order       Int
+  canvasConfig Json    // { width, height, background, gridSize }
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  report      Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  tiles       Tile[]
+
+  @@map("report_pages")
+}
+
+// ─────────────────────────────────────────────
+// TILES (Dashboard Visuals)
+// ─────────────────────────────────────────────
+
+model Tile {
+  id          String   @id @default(cuid())
+  pageId      String
+  type        TileType
+  title       String?
+  
+  // Position & Size (grid units)
+  x           Int
+  y           Int
+  w           Int      // width in grid columns
+  h           Int      // height in grid rows
+  
+  // Data binding
+  datasetId   String?
+  queryConfig Json?    // { sql, filters, aggregations, dimensions, measures }
+  
+  // Visual config
+  visualConfig Json    // Chart type, colors, axes, legend, etc.
+  
+  // Style overrides
+  styleConfig Json?    // { background, border, padding, font, etc. }
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  page        ReportPage @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  dataset     Dataset?   @relation(fields: [datasetId], references: [id])
+
+  @@map("tiles")
+}
+
+// ─────────────────────────────────────────────
+// DATASETS & CONNECTORS
+// ─────────────────────────────────────────────
+
+model Dataset {
+  id          String        @id @default(cuid())
+  workspaceId String
+  name        String
+  description String?
+  type        DatasetType
+  config      Json          // Connection config (encrypted for credentials)
+  schema      Json?         // Discovered column schema
+  lastSyncAt  DateTime?
+  rowCount    Int?
+  createdBy   String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  tiles       Tile[]
+  queryCache  QueryCache[]
+
+  @@map("datasets")
+}
+
+model QueryCache {
+  id          String   @id @default(cuid())
+  datasetId   String
+  queryHash   String   // MD5 of query config
+  result      Json     // Cached query result
+  rowCount    Int
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  dataset     Dataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+
+  @@unique([datasetId, queryHash])
+  @@map("query_cache")
+}
+
+// ─────────────────────────────────────────────
+// THEMES
+// ─────────────────────────────────────────────
+
+model Theme {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  isDefault   Boolean  @default(false)
+  config      Json     // Full theme config object
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  reports     Report[]
+
+  @@map("themes")
+}
+
+// ─────────────────────────────────────────────
+// SHARING & EXPORTS
+// ─────────────────────────────────────────────
+
+model ReportShare {
+  id          String    @id @default(cuid())
+  reportId    String
+  shareToken  String    @unique @default(cuid())
+  password    String?   // Hashed
+  expiresAt   DateTime?
+  viewCount   Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  report      Report @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@map("report_shares")
+}
+
+model Export {
+  id          String    @id @default(cuid())
+  reportId    String
+  format      ExportFormat
+  status      ExportStatus @default(PENDING)
+  fileUrl     String?
+  error       String?
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@map("exports")
+}
+
+// ─────────────────────────────────────────────
+// AI INSIGHTS
+// ─────────────────────────────────────────────
+
+model AIInsight {
+  id          String   @id @default(cuid())
+  tileId      String
+  content     Json     // Array of insight objects
+  model       String
+  tokensUsed  Int
+  createdAt   DateTime @default(now())
+  expiresAt   DateTime
+
+  @@map("ai_insights")
+}
+
+// ─────────────────────────────────────────────
+// BILLING
+// ─────────────────────────────────────────────
+
+model Subscription {
+  id                  String   @id @default(cuid())
+  workspaceId         String   @unique
+  stripeCustomerId    String   @unique
+  stripeSubscriptionId String?  @unique
+  stripePriceId       String?
+  status              SubscriptionStatus
+  currentPeriodStart  DateTime?
+  currentPeriodEnd    DateTime?
+  cancelAtPeriodEnd   Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  workspace           Workspace @relation(fields: [workspaceId], references: [id])
+
+  @@map("subscriptions")
+}
+
+// ─────────────────────────────────────────────
+// AUDIT LOG
+// ─────────────────────────────────────────────
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  workspaceId String
+  userId      String
+  action      String   // e.g., "report.created", "tile.deleted"
+  resourceId  String?
+  metadata    Json?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  @@index([workspaceId, createdAt])
+  @@map("audit_logs")
+}
+
+// ─────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────
+
+enum Plan {
+  FREE
+  PRO
+  TEAM
+  ENTERPRISE
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum TileType {
+  BAR_CHART
+  LINE_CHART
+  AREA_CHART
+  PIE_CHART
+  DONUT_CHART
+  SCATTER_CHART
+  FUNNEL_CHART
+  WATERFALL_CHART
+  GAUGE_CHART
+  TREEMAP_CHART
+  HEATMAP_CHART
+  RADAR_CHART
+  SANKEY_CHART
+  BOX_PLOT
+  COMBO_CHART
+  MAP_CHART
+  KPI_CARD
+  DATA_TABLE
+  TEXT
+  IMAGE
+  FILTER_SLICER
+  DATE_SLICER
+  IFRAME
+}
+
+enum DatasetType {
+  POSTGRESQL
+  MYSQL
+  SQLITE
+  MSSQL
+  BIGQUERY
+  CSV_FILE
+  EXCEL_FILE
+  JSON_FILE
+  REST_API
+  GRAPHQL_API
+  SUPABASE
+  GOOGLE_SHEETS
+  AIRTABLE
+  MONGODB
+  DEMO
+}
+
+enum ExportFormat {
+  PDF
+  PNG
+  CSV
+  XLSX
+  JSON
+}
+
+enum ExportStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELED
+  INCOMPLETE
+  PAST_DUE
+  TRIALING
+  UNPAID
+}
