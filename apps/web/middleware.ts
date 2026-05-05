@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
 const isPublicRoute = createRouteMatcher([
   "/",
@@ -9,20 +10,18 @@ const isPublicRoute = createRouteMatcher([
   "/datasets(.*)",      // Allow viewing datasets in demo
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
-  // Fail-safe check for environment variables
+export default function middleware(req: any, event: any) {
+  // If Clerk keys are missing, bypass Clerk entirely to prevent 500 error
   if (!process.env.CLERK_SECRET_KEY || !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
-    console.error("❌ CLERK KEYS MISSING: Please add CLERK_SECRET_KEY and NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY to Vercel Environment Variables.");
-    return; // Allow the request to proceed without protection to avoid 500 error
+    console.warn("⚠️ Clerk keys missing. Bypassing authentication middleware.");
+    return NextResponse.next();
   }
 
-  try {
+  // Otherwise, run the standard Clerk middleware
+  return clerkMiddleware(async (auth, req) => {
     if (!isPublicRoute(req)) await auth.protect();
-  } catch (error) {
-    console.error("Middleware Invocation Error:", error);
-    throw error;
-  }
-});
+  })(req, event);
+}
 
 export const config = {
   matcher: [
