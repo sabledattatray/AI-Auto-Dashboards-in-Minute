@@ -31,8 +31,7 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClerkProvider 
           publishableKey={clerkKey}
-          afterSignInUrl="/dashboard"
-          afterSignUpUrl="/dashboard"
+          fallbackRedirectUrl="/dashboard"
           signInUrl="/sign-in"
           signUpUrl="/sign-up"
         >
