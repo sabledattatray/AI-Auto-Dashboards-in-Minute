@@ -80,15 +80,15 @@ export default function LandingPage() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-          className="relative mt-20 w-full max-w-6xl"
+          className="relative mt-12 w-full max-w-6xl"
         >
-          <div className="relative overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-900 shadow-2xl shadow-blue-500/10">
+          <div className="relative overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-900 shadow-2xl shadow-blue-500/10 max-h-[550px] lg:max-h-[650px]">
             <Image 
               src="/landing-hero.png" 
               alt="LuminaBI Dashboard Preview" 
               width={1200} 
               height={630} 
-              className="w-full object-cover"
+              className="w-full object-cover object-top"
               priority
             />
             {/* Glassmorphic overlay for depth */}
