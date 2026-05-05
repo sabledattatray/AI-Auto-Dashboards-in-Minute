@@ -129,8 +129,45 @@
   }
 }
 
-/* Clerk UI Tweaks */
-.cl-rootBox {
-  margin-left: auto;
-  margin-right: auto;
+/* Clerk UI Visibility Fixes */
+.cl-rootBox * {
+  color: #f1f5f9 !important; /* slate-100 */
+}
+
+.cl-card {
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+}
+
+.cl-formButtonPrimary {
+  background-color: #2563eb !important;
+  color: white !important;
+}
+
+.cl-formButtonPrimary:hover {
+  background-color: #1d4ed8 !important;
+}
+
+.cl-socialButtonsBlockButton {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+}
+
+.cl-socialButtonsBlockButtonText {
+  color: #f1f5f9 !important;
+}
+
+.cl-dividerLine {
+  background-color: #334155 !important;
+}
+
+.cl-dividerText {
+  color: #64748b !important;
+}
+
+.cl-formFieldInput {
+  background-color: #1e293b !important;
+  border: 1px solid #334155 !important;
+  color: white !important;
 }
