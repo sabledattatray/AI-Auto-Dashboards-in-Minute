@@ -29,12 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ClerkProvider 
-          publishableKey={clerkKey}
-          fallbackRedirectUrl="/dashboard"
-          signInUrl="/sign-in"
-          signUpUrl="/sign-up"
-        >
+        <ClerkProvider publishableKey={clerkKey}>
           <TRPCProvider>{children}</TRPCProvider>
         </ClerkProvider>
       </body>
