@@ -8,8 +8,7 @@ import {
   AlertCircle, 
   Info,
   ChevronRight,
-  BrainCircuit,
-  MessageSquareSparkles
+  BrainCircuit
 } from 'lucide-react';
 import { trpc } from '@/lib/trpc/client';
 import { cn } from '@/lib/utils';
@@ -59,7 +58,7 @@ export function AIInsightPanel({ isOpen, onClose, tileId }: AIInsightPanelProps)
           <div className="space-y-6">
             <div className="rounded-xl bg-primary/5 p-4 border border-primary/10">
               <div className="flex items-center gap-2 text-primary mb-2">
-                <MessageSquareSparkles size={18} />
+                <Sparkles size={18} />
                 <span className="text-sm font-bold">Executive Summary</span>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
