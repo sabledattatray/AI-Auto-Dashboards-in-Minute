@@ -30,8 +30,10 @@ import {
   Copy,
   Check,
   Sun,
-  Moon
+  Moon,
+  User
 } from 'lucide-react';
+import { UserButton, SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { cn } from '@/lib/utils';
 import { exportToPDF } from '@/lib/export';
 
@@ -194,9 +196,26 @@ export function Topbar() {
               className="bg-transparent border-none text-[10px] outline-none w-32"
             />
           </div>
+          <SignedIn>
+            <UserButton 
+              appearance={{
+                elements: {
+                  userButtonAvatarBox: "h-8 w-8 rounded-xl border border-white/10 shadow-lg",
+                  userButtonPopoverCard: "bg-[#0f172a] border border-slate-800 text-slate-200",
+                }
+              }}
+            />
+          </SignedIn>
+          <SignedOut>
+            <SignInButton mode="modal">
+              <button className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-[11px] font-bold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">
+                Sign In
+              </button>
+            </SignInButton>
+          </SignedOut>
           <button 
             onClick={() => handleAction('Share')}
-            className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-[11px] font-bold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">
+            className="flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-[11px] font-bold text-white shadow-lg transition-all active:scale-95 hover:bg-slate-700">
             <Share2 size={12} />
             <span>Share</span>
           </button>
