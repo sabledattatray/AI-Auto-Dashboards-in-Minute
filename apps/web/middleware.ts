@@ -10,7 +10,12 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) await auth.protect();
+  try {
+    if (!isPublicRoute(req)) await auth.protect();
+  } catch (error) {
+    console.error("Middleware Invocation Error:", error);
+    throw error;
+  }
 });
 
 export const config = {
