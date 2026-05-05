@@ -129,9 +129,8 @@
   }
 }
 
-/* Hide Clerk Keyless Onboarding and Dev Banners for Demo */
-button[aria-label="Keyless prompt"],
-div:has(> .cl-internal-14gmazf),
-div[class*="cl-internal"] {
-  display: none !important;
+/* Clerk UI Tweaks */
+.cl-rootBox {
+  margin-left: auto;
+  margin-right: auto;
 }
