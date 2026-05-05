@@ -17,5 +17,9 @@
   "devDependencies": {
     "turbo": "^2.9.8"
   },
-  "packageManager": "npm@10.8.2"
+  "packageManager": "npm@10.8.2",
+  "overrides": {
+    "prisma": "6.2.1",
+    "@prisma/client": "6.2.1"
+  }
 }

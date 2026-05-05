@@ -33,7 +33,7 @@ import {
   Moon,
   User
 } from 'lucide-react';
-import { UserButton, SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
+import { UserButton, Show, SignInButton } from "@clerk/nextjs";
 import { cn } from '@/lib/utils';
 import { exportToPDF } from '@/lib/export';
 
@@ -196,7 +196,7 @@ export function Topbar() {
               className="bg-transparent border-none text-[10px] outline-none w-32"
             />
           </div>
-          <SignedIn>
+          <Show when="signed-in">
             <UserButton 
               appearance={{
                 elements: {
@@ -205,14 +205,14 @@ export function Topbar() {
                 }
               }}
             />
-          </SignedIn>
-          <SignedOut>
+          </Show>
+          <Show when="signed-out">
             <SignInButton mode="modal">
               <button className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-[11px] font-bold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">
                 Sign In
               </button>
             </SignInButton>
-          </SignedOut>
+          </Show>
           <button 
             onClick={() => handleAction('Share')}
             className="flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-[11px] font-bold text-white shadow-lg transition-all active:scale-95 hover:bg-slate-700">
