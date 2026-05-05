@@ -1,6 +1,16 @@
 import { SignIn } from "@clerk/nextjs";
 
 export default function SignInPage() {
+  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+  if (!clerkKey) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#020617] text-slate-400">
+        <p>Authentication is currently disabled (Missing API Keys).</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#020617]">
       <SignIn 
