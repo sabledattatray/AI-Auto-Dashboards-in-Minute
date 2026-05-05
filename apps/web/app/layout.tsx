@@ -1,46 +1,22 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
-import { TRPCProvider } from "@/components/providers/TRPCProvider";
 import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
+import { TRPCProvider } from "@/lib/trpc/client";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   title: "LuminaBI | Ultra Premium Analytics Dashboard",
-  description: "Experience insight at the speed of thought. Professional-grade analytics, seamless data integration, and high-fidelity visualizations.",
-  keywords: ["analytics", "dashboard", "BI", "data visualization", "LuminaBI", "SaaS"],
-  authors: [{ name: "LuminaBI Team" }],
-  openGraph: {
-    title: "LuminaBI | Ultra Premium Analytics",
-    description: "Insight at the speed of thought. Professional-grade analytics dashboard.",
-    url: "https://luminabi.vercel.app",
-    siteName: "LuminaBI",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "LuminaBI Dashboard Preview",
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "LuminaBI | Ultra Premium Analytics",
-    description: "Insight at the speed of thought. Professional-grade analytics dashboard.",
-    images: ["/og-image.png"],
-  },
+  description: "Insight at the speed of thought. Professional-grade analytics dashboard.",
 };
 
 export default function RootLayout({
@@ -48,15 +24,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Use the real key if available, otherwise your project's local key as fallback
   const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_b3Blbi1tb2NjYXNpbi01MC5jbGVyay5hY2NvdW50cy5kZXYk";
 
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
-    >
-      <body suppressHydrationWarning className="min-h-full flex flex-col">
+    <html lang="en">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClerkProvider 
           publishableKey={clerkKey}
           afterSignInUrl="/dashboard"
