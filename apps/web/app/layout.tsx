@@ -48,8 +48,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Use the real key if available, otherwise a dummy key to satisfy build-time requirements
-  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_YnVpbGQtb25seS1rZXktZG8tbm90LXVzZS1pbi1wcm9kCg";
+  // Use the real key if available, otherwise your project's local key as fallback
+  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_b3Blbi1tb2NjYXNpbi01MC5jbGVyay5hY2NvdW50cy5kZXYk";
 
   return (
     <html
