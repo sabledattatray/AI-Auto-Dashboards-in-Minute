@@ -57,7 +57,13 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
       <body suppressHydrationWarning className="min-h-full flex flex-col">
-        <ClerkProvider publishableKey={clerkKey}>
+        <ClerkProvider 
+          publishableKey={clerkKey}
+          afterSignInUrl="/dashboard"
+          afterSignUpUrl="/dashboard"
+          signInUrl="/sign-in"
+          signUpUrl="/sign-up"
+        >
           <TRPCProvider>{children}</TRPCProvider>
         </ClerkProvider>
       </body>
