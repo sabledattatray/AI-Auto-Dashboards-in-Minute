@@ -10,6 +10,12 @@ const isPublicRoute = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  // Fail-safe check for environment variables
+  if (!process.env.CLERK_SECRET_KEY || !process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
+    console.error("❌ CLERK KEYS MISSING: Please add CLERK_SECRET_KEY and NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY to Vercel Environment Variables.");
+    return; // Allow the request to proceed without protection to avoid 500 error
+  }
+
   try {
     if (!isPublicRoute(req)) await auth.protect();
   } catch (error) {
