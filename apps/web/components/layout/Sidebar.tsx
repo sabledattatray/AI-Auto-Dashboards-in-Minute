@@ -31,7 +31,7 @@ import {
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Reports', href: '/reports', icon: BarChart3 },
   { name: 'Datasets', href: '/datasets', icon: Database },
   { name: 'Workspace', href: '/workspace', icon: Layers },
@@ -128,11 +128,11 @@ export function Sidebar() {
                 const ds = useCanvasStore.getState().lastLoadedDataset;
                 if (ds) {
                   useCanvasStore.getState().generateDashboardFromDataset(ds);
-                  if (pathname !== '/') {
+                  if (pathname !== '/dashboard') {
                     try {
-                      router.push('/');
+                      router.push('/dashboard');
                     } catch (e) {
-                      window.location.href = '/';
+                      window.location.href = '/dashboard';
                     }
                   }
                 } else {
