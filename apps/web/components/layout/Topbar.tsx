@@ -1,5 +1,6 @@
 'use client';
 
+import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCanvasStore } from '@/store/useCanvasStore';
@@ -33,7 +34,6 @@ import {
   Moon,
   User
 } from 'lucide-react';
-import { UserButton, Show, SignInButton } from "@clerk/nextjs";
 import { cn } from '@/lib/utils';
 import { exportToPDF } from '@/lib/export';
 
@@ -67,6 +67,7 @@ const tools: ToolGroup[] = [
 
 export function Topbar() {
   const { resetStore, addTile, isDarkMode, toggleDarkMode } = useCanvasStore();
+  const { isSignedIn } = useUser();
   const router = useRouter();
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -196,7 +197,7 @@ export function Topbar() {
               className="bg-transparent border-none text-[10px] outline-none w-32"
             />
           </div>
-          <Show when="signed-in">
+          {isSignedIn ? (
             <UserButton 
               appearance={{
                 elements: {
@@ -205,14 +206,13 @@ export function Topbar() {
                 }
               }}
             />
-          </Show>
-          <Show when="signed-out">
+          ) : (
             <SignInButton mode="modal">
               <button className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-1.5 text-[11px] font-bold text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all active:scale-95">
                 Sign In
               </button>
             </SignInButton>
-          </Show>
+          )}
           <button 
             onClick={() => handleAction('Share')}
             className="flex items-center gap-1.5 rounded-lg border border-slate-700 bg-slate-800 px-3 py-1.5 text-[11px] font-bold text-white shadow-lg transition-all active:scale-95 hover:bg-slate-700">
