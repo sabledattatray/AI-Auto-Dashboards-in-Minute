@@ -48,27 +48,19 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-
-  const content = (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-    <body suppressHydrationWarning className="min-h-full flex flex-col">
-      <TRPCProvider>{children}</TRPCProvider>
-    </body>
-    </html>
-  );
-
-  if (!clerkKey) {
-    console.warn("⚠️ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is missing. Rendering without ClerkProvider.");
-    return content;
-  }
+  // Use the real key if available, otherwise a dummy key to satisfy build-time requirements
+  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_YnVpbGQtb25seS1rZXktZG8tbm90LXVzZS1pbi1wcm9kCg";
 
   return (
     <ClerkProvider publishableKey={clerkKey}>
-      {content}
+      <html
+        lang="en"
+        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      >
+        <body suppressHydrationWarning className="min-h-full flex flex-col">
+          <TRPCProvider>{children}</TRPCProvider>
+        </body>
+      </html>
     </ClerkProvider>
   );
 }
