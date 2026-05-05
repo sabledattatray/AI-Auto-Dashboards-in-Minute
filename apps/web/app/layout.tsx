@@ -52,15 +52,15 @@ export default function RootLayout({
   const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || "pk_test_YnVpbGQtb25seS1rZXktZG8tbm90LXVzZS1pbi1wcm9kCg";
 
   return (
-    <ClerkProvider publishableKey={clerkKey}>
-      <html
-        lang="en"
-        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-      >
-        <body suppressHydrationWarning className="min-h-full flex flex-col">
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body suppressHydrationWarning className="min-h-full flex flex-col">
+        <ClerkProvider publishableKey={clerkKey}>
           <TRPCProvider>{children}</TRPCProvider>
-        </body>
-      </html>
-    </ClerkProvider>
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
